@@ -28,8 +28,6 @@ def tally_word(word, spam):
         words[word] = [1, 0]
         if spam:
             words[word][1] = 1
-        else:
-            words[word][0] = 0
     total_words += 1
     if spam:
         spam_words += 1
