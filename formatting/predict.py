@@ -5,6 +5,11 @@ import random
 
 os.chdir('../data/')
 
+false_positives = 0
+false_negatives = 0
+true_positives = 0
+true_negatives = 0
+
 # pull the extra data
 extra_data = json.load(open("extra_data.json"))
 spam_prob = float(extra_data["spam_subjects"]) / float(extra_data["total_subjects"])
@@ -33,14 +38,20 @@ def get_words(subject: str):
 def calc_spam_conf(words):
     result = 1
     for word in words:
-        result *= probabilities[word][0]
+        try:
+            result *= probabilities[word][0]
+        except:
+            pass
     return result * spam_prob
 
 # calculate the confidence that a subject is ham
 def calc_ham_conf(words):
     result = 1
     for word in words:
-        result *= probabilities[word][1]
+        try:
+            result *= probabilities[word][1]
+        except:
+            pass
     return result * ham_prob
 
 # pick a choice
@@ -59,7 +70,25 @@ def predict(subject: str):
     ham_conf = calc_ham_conf(words)
     return pick_classification(spam_conf, ham_conf)
 
-subjects = open("subject lines.train", newline="\n")
+# adds up to the false/true pos/neg counters
+def tally(actual, guess):
+    global true_positives
+    global true_negatives
+    global false_negatives
+    global false_positives
+    if actual == 1 and guess == 1:
+        #print("true pos")
+        true_positives += 1
+    elif actual == 0 and guess == 0:
+        true_negatives += 1
+    elif actual == 1 and guess == 0:
+        #print("false neg")
+        false_negatives += 1
+    elif actual == 0 and guess == 1:
+        #print("false pos")
+        false_positives += 1
+
+subjects = open("subject lines.test",newline="\n", encoding='utf8')
 subjects_reader = csv.reader(subjects, delimiter="\t", quotechar="\"")
 
 output = open("predictions.train", mode ="w", newline="\n")
@@ -67,6 +96,17 @@ output_writer = csv.writer(output, delimiter=",", quotechar="\"")
 output_writer.writerow(["spam", "pred", "subject"])
 
 for subject in subjects_reader:
-    output_writer.writerow([subject[0], predict(subject[1]), subject[1]])
+    actual = int(subject[0])
+    guess = int(predict(subject[1]))
+    tally(actual, guess)
+    output_writer.writerow([actual, guess, subject[1]])
 
 output.close()
+
+print(f"True Positives: {true_positives}")
+print(f"True Negatives: {true_negatives}")
+print(f"False Positives: {false_positives}")
+print(f"False Negatives: {false_negatives}")
+print()
+print(f"Precision: {float(true_positives) / float(true_positives + false_positives)}")
+print(f"Recall: {float(true_positives) / float(true_positives + false_negatives)}")

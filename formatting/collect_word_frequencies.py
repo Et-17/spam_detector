@@ -36,21 +36,24 @@ def tally_word(word, spam):
 def get_words(subject: str):
     subject = subject.lower()
     split_tokens = subject.split() # empty deliminator defaults to any whitespace
-    alpha_tokens = list(filter(lambda x: x.isalpha(), split_tokens))
-    return alpha_tokens
+    alpha_tokens = list(filter(lambda x: x.isalpha(), split_tokens))#
+    return split_tokens
 
 print("Tallying words ...", end="")
 
-lines_file = open('subject lines.train')
+lines_file = open('subject lines.train', encoding='utf8')
 lines_reader = csv.reader(lines_file, delimiter='\t', quotechar='\"')
 
 for line in lines_reader:
-    total_subjects += 1
-    is_spam = int(line[0]) == 1
-    if is_spam:
-        spam_subjects += 1
-    for word in get_words(line[1]):
-        tally_word(word, is_spam)
+    try:
+        is_spam = int(line[0]) == 1
+        total_subjects += 1
+        if is_spam:
+            spam_subjects += 1
+        for word in get_words(line[1]):
+            tally_word(word, is_spam)
+    except:
+        print(f"fail on line \"{line}\"")
         
 
 lines_file.close()
