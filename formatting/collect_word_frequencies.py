@@ -1,9 +1,14 @@
 import os
 import csv
+import json
 
 os.chdir('../data/')
 
-# a tally of all wods and how often they are used in [total, spam]
+# a count of how many subject lines are spam and how many total
+spam_subjects = 0
+total_subjects = 0
+
+# a tally of all words and how often they are used in [total, spam]
 words = {}
 
 # increases the words tally
@@ -34,17 +39,31 @@ lines_reader = csv.reader(lines_file, delimiter='\t', quotechar='\"')
 
 for line in lines_reader:
     for word in get_words(line[1]):
-        tally_word(word, int(line[0]))
+        is_spam = int(line[0]) == 1
+        tally_word(word, is_spam)
+        total_subjects += 1
+        if is_spam:
+            spam_subjects += 1
+        
 
 lines_file.close()
 
 print(" done")
-print("Storing ...", end="")
+print("Storing word frequencies ...", end="")
 
 with open('words_tally.csv', 'w', newline='\n') as tally_file:
     tally_writer = csv.writer(tally_file, delimiter=',', quotechar="\"", quoting=csv.QUOTE_ALL)
     tally_writer.writerow(["total_usage", "spam_usage",  "word"])
     for word in words:
         tally_writer.writerow([words[word][0], words[word][1], word])
+
+print(" done")
+print("Storing extra data ...", end="")
+
+with open("extra_data.json", "w") as extra_data_file:
+    json.dump({
+        "total_subjects": total_subjects,
+        "spam_subjects": spam_subjects
+    }, extra_data_file)
 
 print(" done")
