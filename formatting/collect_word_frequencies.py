@@ -8,22 +8,31 @@ os.chdir('../data/')
 spam_subjects = 0
 total_subjects = 0
 
+# a count of how many words the subject lines use a word
+spam_words = 0
+total_words = 0
+
 # a tally of all words and how often they are used in [total, spam]
 words = {}
 
 # increases the words tally
 def tally_word(word, spam):
     global words
+    global spam_words
+    global total_words
     if word in words:
         words[word][0] += 1
-        if spam == 1:
+        if spam:
             words[word][1] += 1
     else:
         words[word] = [1, 0]
-        if spam == 1:
+        if spam:
             words[word][1] = 1
         else:
             words[word][0] = 0
+    total_words += 1
+    if spam:
+        spam_words += 1
 
 # takes in a subject line and returns the words in it
 def get_words(subject: str):
@@ -38,12 +47,12 @@ lines_file = open('subject lines.train')
 lines_reader = csv.reader(lines_file, delimiter='\t', quotechar='\"')
 
 for line in lines_reader:
+    total_subjects += 1
+    is_spam = int(line[0]) == 1
+    if is_spam:
+        spam_subjects += 1
     for word in get_words(line[1]):
-        is_spam = int(line[0]) == 1
         tally_word(word, is_spam)
-        total_subjects += 1
-        if is_spam:
-            spam_subjects += 1
         
 
 lines_file.close()
@@ -63,7 +72,10 @@ print("Storing extra data ...", end="")
 with open("extra_data.json", "w") as extra_data_file:
     json.dump({
         "total_subjects": total_subjects,
-        "spam_subjects": spam_subjects
+        "spam_subjects": spam_subjects,
+        "word_count": len(words.keys()),
+        "spam_words_total": spam_words,
+        "total_words_total": total_words
     }, extra_data_file)
 
 print(" done")
