@@ -1,1 +1,3 @@
-data/
+data/*
+!data/subject lines.test
+!data/subject lines.train
