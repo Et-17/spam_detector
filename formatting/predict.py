@@ -18,7 +18,7 @@ ham_prob = 1.0 - spam_prob
 # stores the probabilities in the format [spam_prob, ham_prob]
 probabilities = {}
 
-probabilities_list = open("word_probs.csv", newline="\n")
+probabilities_list = open("word_probs.csv", newline="\n", encoding='utf8')
 probabilities_reader = csv.reader(probabilities_list, delimiter=",", quotechar="\"")
 probabilities_reader.__next__() # skip header
 
@@ -91,7 +91,7 @@ def tally(actual, guess):
 subjects = open("subject lines.test",newline="\n", encoding='utf8')
 subjects_reader = csv.reader(subjects, delimiter="\t", quotechar="\"")
 
-output = open("predictions.train", mode ="w", newline="\n")
+output = open("predictions.train", mode ="w", newline="\n", encoding='utf8')
 output_writer = csv.writer(output, delimiter=",", quotechar="\"")
 output_writer.writerow(["spam", "pred", "subject"])
 

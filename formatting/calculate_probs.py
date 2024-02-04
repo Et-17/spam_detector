@@ -13,11 +13,11 @@ spam_total_count = extra_data["spam_words_total"]
 total_total_count = extra_data["total_words_total"]
 
 # prepare files
-words_file = open("words_tally.csv", newline="\n")
+words_file = open("words_tally.csv", newline="\n", encoding='utf8')
 words_reader = csv.reader(words_file, delimiter=",", quotechar="\"")
 words_reader.__next__() # skip the header
 
-output_file = open("word_probs.csv", "w", newline="\n")
+output_file = open("word_probs.csv", "w", newline="\n", encoding='utf8')
 output_writer = csv.writer(output_file, delimiter=",", quotechar="\"", quoting=csv.QUOTE_ALL)
 output_writer.writerow(["spam_prob", "ham_prob", "word"])
 

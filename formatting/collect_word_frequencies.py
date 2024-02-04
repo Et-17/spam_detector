@@ -61,7 +61,7 @@ lines_file.close()
 print(" done")
 print("Storing word frequencies ...", end="")
 
-with open('words_tally.csv', 'w', newline='\n') as tally_file:
+with open('words_tally.csv', 'w', newline='\n', encoding='utf8') as tally_file:
     tally_writer = csv.writer(tally_file, delimiter=',', quotechar="\"", quoting=csv.QUOTE_ALL)
     tally_writer.writerow(["total_usage", "spam_usage",  "word"])
     for word in words:
