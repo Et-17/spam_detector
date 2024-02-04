@@ -65,3 +65,22 @@ lines_file.close()
 print(" done")
 print(f"{spam_subjects} subject lines are spam out of {total_subjects} total")
 print(f"{len(words)} words were collected")
+print()
+
+print("Computing word probabilities ...", end='')
+
+# this will hold the compute word probabilities in the format [spam_prob, ham_prob]
+word_probs = {}
+
+def calc_spam_prob(spam_count: int) -> float:
+    return float(spam_count) / float(spam_words)
+
+def calc_ham_prob(total_count: int, spam_count: int) -> float:
+    return (total_count - spam_count) / (total_words - spam_words)
+
+for word in words.keys():
+    spam_prob = calc_spam_prob(words[word][1])
+    ham_prob = calc_ham_prob(words[word][0], words[word][1])
+    word_probs[word] = [spam_prob, ham_prob]
+
+print(" done")
