@@ -4,13 +4,15 @@ import random
 
 os.chdir('data')
 
-train_file_path = "subject lines.train"
-test_file_path = "subject lines.test"
+train_file_path = "subject_lines.train"
+test_file_path = "subject_lines.test"
+prediction_output_path = "predictions.csv"
 
 print("Spam Detector by L Kilborn")
 print()
 print(f"Training file: {train_file_path}")
 print(f"Testing file: {test_file_path}")
+print(f"Predictions file: {prediction_output_path}")
 print()
 
 print("Tallying word usage ...", end='')
@@ -49,7 +51,7 @@ def get_words(subject: str):
     split_tokens = subject.split() # empty deliminator defaults to any whitespace
     return split_tokens
 
-lines_file = open('subject lines.train', encoding='utf8')
+lines_file = open(train_file_path, encoding='utf8')
 lines_reader = csv.reader(lines_file, delimiter='\t', quotechar='\"')
 
 for line in lines_reader:
@@ -146,10 +148,10 @@ def tally(actual, guess):
     elif actual == 0 and guess == 1:
         false_positives += 1
 
-test_file = open("subject lines.test", newline="\n", encoding="utf8")
+test_file = open(test_file_path, newline="\n", encoding="utf8")
 test_reader = csv.reader(test_file, delimiter="\t", quotechar="\"")
 
-output = open("predictions.csv", mode="w", newline="\n", encoding="utf8")
+output = open(prediction_output_path, mode="w", newline="\n", encoding="utf8")
 output_writer = csv.writer(output, delimiter=",", quotechar="\"")
 output_writer.writerow(["spam", "pred", "subject"])
 
