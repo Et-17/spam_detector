@@ -162,6 +162,8 @@ for test in test_reader:
 output.close()
 
 print(" done")
+print(f"{true_positives + false_negatives} subject lines are spam and {true_negatives + false_positives} are ham")
+print()
 print(f"True Positives: {true_positives}")
 print(f"True Negatives: {true_negatives}")
 print(f"False Positives: {false_positives}")
