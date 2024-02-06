@@ -1,6 +1,7 @@
 import os
 import csv
 import random
+import give_an_example
 
 os.chdir('data')
 
@@ -91,6 +92,9 @@ print()
 
 print("Evaluating performance ...", end='')
 
+# a tally of how many test_subjects there aer so that we can select one for the example
+test_subjects = 0
+
 false_positives = 0
 false_negatives = 0
 true_positives = 0
@@ -160,6 +164,7 @@ for test in test_reader:
     guess = predict(test[1])
     tally(actual, guess)
     output_writer.writerow([actual, guess, test[1]])
+    test_subjects += 1
 
 output.close()
 
@@ -174,3 +179,14 @@ print()
 print(f"Precision: {float(true_positives) / float(true_positives + false_positives)}")
 print(f"Recall: {float(true_positives) / float(true_positives + false_negatives)}")
 print(f"F1: {(2 * true_positives) / (2 * true_positives + false_positives + false_negatives)}")
+print()
+print("Would you like an example? (y/N) ", end="")
+
+answer = input()
+while (answer.strip().lower() != 'y' and answer.strip().lower() != 'n' and answer.strip() != ''):
+    print("Please answer either y or n")
+    print("Would you like an example? (y/N) ")
+    answer = input()
+if answer.strip().lower() == 'y':
+    print()
+    give_an_example.show_example(test_file_path, test_subjects, get_words, word_probs, spam_prob, ham_prob)
