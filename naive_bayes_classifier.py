@@ -76,11 +76,25 @@ print("Computing word probabilities ...", end='')
 # this will hold the compute word probabilities in the format [spam_prob, ham_prob]
 word_probs = {}
 
+# we need to find not just the overall word usage but the unique words in each
+# category for the additive smoothing
+spam_unique_words = 0
+ham_unique_words = 0
+
+for word in words.keys():
+    if words[word][1] > 0:
+        spam_unique_words += 1
+    if words[word][0] - words[word][1] > 0:
+        ham_unique_words += 1
+
 def calc_spam_prob(spam_count: int) -> float:
-    return float(spam_count) / float(spam_words)
+    return (spam_count + 1) / (spam_words + spam_unique_words)
 
 def calc_ham_prob(total_count: int, spam_count: int) -> float:
-    return (total_count - spam_count) / (total_words - spam_words)
+    return (total_count - spam_count + 1) / (total_words - spam_words + spam_unique_words)
+
+unknown_word_spam_prob = calc_spam_prob(0)
+unknown_word_ham_prob = calc_ham_prob(0, 0)
 
 for word in words.keys():
     spam_prob = calc_spam_prob(words[word][1])
@@ -108,6 +122,7 @@ def calc_spam_conf(words):
     result = 1
     for word in words:
         if not (word in word_probs.keys()): 
+            result *= unknown_word_spam_prob
             continue
         result *= word_probs[word][0]
     return result * spam_prob
@@ -117,6 +132,7 @@ def calc_ham_conf(words):
     result = 1
     for word in words:
         if not (word in word_probs.keys()):
+            result *= unknown_word_ham_prob
             continue
         result *= word_probs[word][1]
     return result * ham_prob
@@ -182,6 +198,12 @@ print(f"F1: {(2 * true_positives) / (2 * true_positives + false_positives + fals
 print()
 print("Would you like an example? (y/N) ", end="")
 
+# MESSAGE TO STUDENTS:
+# What follows is just the example stuff. It's the exact same as the rest of the
+# script but less documented and with tons of text processing in it. Those
+# who do not worship Our Lady of Discord will not understand the deep magic, but
+# analysis would yield nothing anyway.
+
 answer = input()
 while (answer.strip().lower() != 'y' and answer.strip().lower() != 'n' and answer.strip() != ''):
     print("Please answer either y or n")
@@ -189,4 +211,4 @@ while (answer.strip().lower() != 'y' and answer.strip().lower() != 'n' and answe
     answer = input()
 if answer.strip().lower() == 'y':
     print()
-    give_an_example.show_example(test_file_path, test_subjects, get_words, word_probs, spam_prob, ham_prob)
+    give_an_example.show_example(test_file_path, test_subjects, get_words, word_probs, spam_prob, ham_prob, unknown_word_spam_prob, unknown_word_ham_prob)
