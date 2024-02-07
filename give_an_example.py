@@ -2,8 +2,10 @@
 import os
 import csv
 import random
+import time
 
 digits = 10
+graph_output_delay = 0.2
 
 # this script will be called from naive_bayes_classifier.py so we don't
 # need to move to the data directory
@@ -43,6 +45,7 @@ def show_example(test_file_path, total_subject_count, get_word_func, word_probs,
     subject_spam_prob = 1
     subject_ham_prob = 1
     for word in example_words:
+        time.sleep(graph_output_delay)
         word_spam_prob = 0
         word_ham_prob = 0
         if word in word_probs.keys():
@@ -56,10 +59,13 @@ def show_example(test_file_path, total_subject_count, get_word_func, word_probs,
         subject_ham_prob *= word_ham_prob
     subject_spam_prob *= spam_prob
     subject_ham_prob *= ham_prob
+    time.sleep(graph_output_delay)
     print("-"*(longest_word_length + digits + digits + 6))
     print(table_template.format("Full", spam_prob, ham_prob))
+    time.sleep(graph_output_delay)
     print(header_template.format("", "↧", "↧"))
     print(table_template.format("Total", subject_spam_prob, subject_ham_prob))
+    time.sleep(graph_output_delay)
     num_result = pick_classification(subject_spam_prob, subject_ham_prob)
     comp_char = ""
     text_result = ""
@@ -72,6 +78,7 @@ def show_example(test_file_path, total_subject_count, get_word_func, word_probs,
     elif num_result == 2:
         comp_char = "="
         text_result = "Tie"
+    time.sleep(graph_output_delay)
     # move the beginning of the previous row, then move to the calculated absolute horizontal
     # print the comparison char, move to the end, then print the text result
     print(f"\033[1F\033[{longest_word_length + digits + 5}C{comp_char}\033[13C→ {text_result}")
