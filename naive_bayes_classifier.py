@@ -143,8 +143,12 @@ def pick_classification(spam_conf, ham_conf):
         return 1
     elif ham_conf > spam_conf:
         return 0
-    else: # if the probs are equal, then we make a random selection based on the overal probs
-        return int(random.random() < spam_prob)
+    elif spam_prob > ham_prob: # uh oh the probs are equal, we have to choose the overall prob
+        return 1
+    elif ham_prob > spam_prob:
+        return 0
+    else: # the confs are a tie, and the probs are a tie. it's 50/50
+        return random.randint(0,1)
 
 # predicts the result of a subject line
 def predict(subject: str):
