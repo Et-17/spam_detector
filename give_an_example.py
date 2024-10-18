@@ -32,7 +32,7 @@ def select_an_example(test_file_path, total_subject_count, get_word_func):
             break
     return (example_subject, get_word_func(example_subject))
 
-def show_example(test_file_path, total_subject_count, get_word_func, word_probs, spam_prob, ham_prob, unknown_word_spam_prob, unknown_word_ham_prob):
+def show_example(test_file_path, total_subject_count, get_word_func, word_probs, spam_prob, ham_prob, unknown_word_ham_prob, unknown_word_spam_prob):
     (example_subject, example_words) = select_an_example(test_file_path, total_subject_count, get_word_func)
     print(f"Subject: {example_subject}")
     print(f"Words: {example_words}")
