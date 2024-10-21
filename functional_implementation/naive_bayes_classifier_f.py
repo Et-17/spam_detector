@@ -86,3 +86,4 @@ def process_data(data_iter):
         *tally
     )
     return reduce(proc_acc, data_iter, initial_val)
+
