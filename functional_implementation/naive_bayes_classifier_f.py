@@ -1,6 +1,8 @@
 import os
 import csv
-from training import *
+from training import process_data, calc_word_probs, classify
+from functools import partial
+from evaluation import evaluate, precision, recall, f1
 
 os.chdir("..\\data")
 
@@ -12,13 +14,13 @@ prediction_output_path = "predictions.csv"
 def get_words(subject: str):
     return subject.lower().split()
 
-def raw_training_data():
-    lines_file = open(train_file_path, encoding="utf8")
+def raw_data(path):
+    lines_file = open(path, encoding="utf8")
     return csv.reader(lines_file, delimiter="\t")
 
-def training_data():
+def read_data(path):
     proc_line = lambda line: (line[0] == "1", get_words(line[1]))
-    return map(proc_line, raw_training_data())
+    return map(proc_line, raw_data(path))
 
 print("Spam Detector by L Kilborn")
 print()
@@ -28,7 +30,7 @@ print(f"Predictions file: {prediction_output_path}")
 print()
 print("Tallying word usage ...", end="")
 
-tally = process_data(training_data())
+tally = process_data(read_data(train_file_path))
 subject_line_counts = tally[0]
 
 print(" done")
@@ -40,3 +42,18 @@ print("Computing word probabilities ...", end="")
 probs = calc_word_probs(*tally)
 
 print(" done")
+print("Evaluating performance ...", end="")
+
+classification_function = partial(classify, subject_line_counts, *probs)
+confusion_matrix = evaluate(read_data(test_file_path), classification_function)
+
+print(" done")
+print()
+print(f"True Positives: {confusion_matrix[0]}")
+print(f"True Negatives: {confusion_matrix[1]}")
+print(f"False Positives: {confusion_matrix[2]}")
+print(f"False Negatives: {confusion_matrix[3]}")
+print()
+print(f"Precision: {precision(*confusion_matrix)}")
+print(f"Recall: {recall(*confusion_matrix)}")
+print(f"F1: {f1(*confusion_matrix)}")

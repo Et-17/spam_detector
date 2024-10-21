@@ -82,5 +82,7 @@ def pick_classification(ham_prob, spam_prob):
     return spam_prob > ham_prob
 
 # classifies a subject line given as a list of tokens
-def classify(subject, subject_line_counts, unknown_token_probs, word_probs):
+# while it makes sense to put subject first, this will simplify 
+# creating a partial function later
+def classify(subject_line_counts, unknown_token_probs, word_probs, subject):
     return pick_classification(*calc_subject_probs(subject, subject_line_counts, unknown_token_probs, word_probs))
